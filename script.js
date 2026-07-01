@@ -5,6 +5,7 @@ const CONFIG = Object.freeze({
   yourName: "Luca",
   recipientName: "Anja",
   yourEmail: "luca311.h@gmail.com",
+  formspreeEndpoint: "https://formspree.io/f/xpqgyogz",
   websiteTitle: "Date Planner",
   meetingDurationHours: 5,
   defaultTheme: "auto"
@@ -248,7 +249,7 @@ function renderSummary() {
     const dt = document.createElement("dt"); const dd = document.createElement("dd");
     dt.textContent = term; dd.textContent = value; wrapper.append(dt, dd); return wrapper;
   }));
-  $("#config-warning").hidden = CONFIG.yourEmail !== "MEINE_EMAIL";
+  $("#config-warning").hidden = isFormspreeConfigured();
 }
 
 function startCountdown() {
@@ -288,12 +289,61 @@ function createICS() {
   showToast("Kalenderdatei wurde erstellt.");
 }
 
-function sendEmail() {
+function isFormspreeConfigured() {
+  return /^https:\/\/formspree\.io\/f\/[a-zA-Z0-9]+$/.test(CONFIG.formspreeEndpoint)
+    && !CONFIG.formspreeEndpoint.includes("DEINE_FORM_ID");
+}
+
+function buildEmailBody() {
+  return [`Hallo ${CONFIG.yourName},`, "", "hier ist meine Auswahl für unser Date:", "", `Datum: ${formatDate(getMeetingDate())}`, `Uhrzeit: ${state.time} Uhr`, `Aktivität: ${state.activity}`, `Restaurant: ${state.restaurant}`, state.other && `Eigener Vorschlag: ${state.other}`, `Persönliche Nachricht: ${state.message || "–"}`, "", "Ich freue mich!"]
+    .filter(line => line !== false).join("\n");
+}
+
+function openMailFallback() {
   if (CONFIG.yourEmail === "MEINE_EMAIL") {
-    showToast("Bitte zuerst deine E-Mail-Adresse in script.js eintragen."); return;
+    showToast("Bitte zuerst die Versand-Konfiguration in script.js eintragen.");
+    return;
   }
-  const body = [`Hallo ${CONFIG.yourName},`, "", "hier ist meine Auswahl für unser Date:", "", `Datum: ${formatDate(getMeetingDate())}`, `Uhrzeit: ${state.time} Uhr`, `Aktivität: ${state.activity}`, `Restaurant: ${state.restaurant}`, state.other && `Eigener Vorschlag: ${state.other}`, `Persönliche Nachricht: ${state.message || "–"}`, "", "Ich freue mich!"].filter(line => line !== false && line !== "").join("\n");
-  location.href = `mailto:${encodeURIComponent(CONFIG.yourEmail)}?subject=${encodeURIComponent("Unser Date")}&body=${encodeURIComponent(body)}`;
+  location.href = `mailto:${encodeURIComponent(CONFIG.yourEmail)}?subject=${encodeURIComponent("Unser Date")}&body=${encodeURIComponent(buildEmailBody())}`;
+}
+
+async function sendEmail() {
+  if (!isFormspreeConfigured()) {
+    showToast("Direktversand noch nicht eingerichtet – Mail-App wird geöffnet.");
+    openMailFallback();
+    return;
+  }
+
+  const button = $("#email-button");
+  const originalContent = button.innerHTML;
+  button.disabled = true;
+  button.textContent = "Wird gesendet …";
+
+  try {
+    const response = await fetch(CONFIG.formspreeEndpoint, {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({
+        _subject: "Unser Date",
+        datum: formatDate(getMeetingDate()),
+        uhrzeit: `${state.time} Uhr`,
+        aktivitaet: state.activity,
+        restaurant: state.restaurant,
+        eigener_vorschlag: state.other || "–",
+        nachricht: state.message || "–",
+        message: buildEmailBody()
+      })
+    });
+    if (!response.ok) throw new Error(`Formspree antwortete mit Status ${response.status}`);
+    button.textContent = "Erfolgreich gesendet ✓";
+    showToast("Deine Auswahl wurde direkt an Luca gesendet. ♥");
+    setTimeout(() => { button.innerHTML = originalContent; button.disabled = false; }, 3500);
+  } catch {
+    button.innerHTML = originalContent;
+    button.disabled = false;
+    showToast("Direktversand fehlgeschlagen. Bitte versuche es erneut.");
+    if (confirm("Der direkte Versand hat nicht geklappt. Möchtest du stattdessen deine Mail-App öffnen?")) openMailFallback();
+  }
 }
 
 function createHeartBurst() {

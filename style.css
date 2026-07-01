@@ -62,6 +62,7 @@ textarea { resize:vertical;min-height:145px; }
 .button { border:0;border-radius:999px;padding:.82rem 1.35rem;font-weight:750;white-space:nowrap;transition:transform .18s,box-shadow .18s,background .18s;position:relative;overflow:hidden; }
 .button:hover { transform:translateY(-2px); }
 .button:active { transform:translateY(0) scale(.98); }
+.button:disabled { cursor:wait;opacity:.72;transform:none; }
 .primary { color:white;background:linear-gradient(120deg,var(--primary),var(--primary-2));box-shadow:0 10px 24px rgba(190,83,96,.24); }
 .secondary { background:var(--surface);border:1px solid var(--line);color:var(--text); }
 .icon-button { position:fixed;right:clamp(1rem,3vw,2rem);top:clamp(1rem,3vw,2rem);z-index:10;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);box-shadow:0 8px 24px rgba(60,40,43,.1);backdrop-filter:blur(14px); }
