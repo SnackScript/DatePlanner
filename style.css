@@ -91,7 +91,8 @@ textarea { resize:vertical;min-height:145px; }
 .step-heading { display:flex;gap:1.1rem;align-items:flex-start;margin-bottom:2rem; }
 .step-heading p:last-child { color:var(--muted);margin:0; }
 .step-icon { flex:0 0 auto;display:grid;place-items:center;width:52px;height:52px;border-radius:17px;background:var(--primary-soft);color:var(--primary);font-size:1.35rem; }
-.field-grid { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+.field-grid { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem; }
+.field-grid label { min-width:0; }
 .field-grid input,.other-field input { margin-top:.5rem; }
 .choice-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem; }
 .choice { border:1px solid var(--line);background:color-mix(in srgb,var(--surface-solid) 60%,transparent);border-radius:var(--radius-sm);padding:1.15rem .9rem;text-align:left;min-height:105px;transition:.2s ease; }
@@ -119,8 +120,9 @@ footer { text-align:center;color:var(--muted);font-size:.8rem;padding:2.5rem 0 1
 @media (max-width:720px) {
   .page{padding:1rem}.welcome-card{padding:2rem 1.25rem}.input-row{flex-direction:column}.input-row .button{width:100%}
   .planner-header{margin-bottom:2rem;padding-right:3.5rem}.choice-grid{grid-template-columns:repeat(2,1fr)}.field-grid,.summary{grid-template-columns:1fr}
+  .field-grid input{min-width:0;max-width:100%}
   .step-heading{display:block}.step-icon{margin-bottom:1rem}.resume{grid-template-columns:auto 1fr}.resume-actions{grid-column:1/-1}.resume-actions .button{flex:1}
-  .final-actions{flex-direction:column}.wizard-nav .button{padding:.75rem 1rem}.theme-toggle{width:42px;height:42px}
+  .final-actions{flex-direction:column;align-items:stretch}.final-actions .button{width:100%;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.35}.wizard-nav .button{padding:.75rem 1rem}.theme-toggle{width:42px;height:42px}
 }
 @media (max-width:390px) { .choice-grid{grid-template-columns:1fr}.progress-copy span:last-child{display:none}.planner-header .text-button{font-size:.8rem} }
 @media (prefers-reduced-motion:reduce) {
