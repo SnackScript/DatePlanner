@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="de" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Eine persönliche Einladung – nur für dich.">
+  <meta name="theme-color" content="#fff8f4">
+  <title>Date Planner</title>
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-one"></span><span class="orb orb-two"></span><span class="orb orb-three"></span>
+    <div id="particles"></div>
+  </div>
+
+  <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Farbschema wechseln" title="Farbschema wechseln">
+    <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+  </button>
+
+  <main id="main-content">
+    <section class="gate page active" id="gate" aria-labelledby="gate-title">
+      <div class="glass welcome-card">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> Persönliche Einladung</div>
+        <div class="heart-mark" aria-hidden="true">♥</div>
+        <h1 id="gate-title">Diese Einladung ist für eine ganz besondere Person.</h1>
+        <p class="lead">Ein kleiner Plan, nur für uns zwei. Aber zuerst muss ich kurz wissen, ob du wirklich du bist.</p>
+        <form id="name-form" novalidate>
+          <label for="name-input">Wie lautet dein Vorname?</label>
+          <div class="input-row">
+            <input id="name-input" name="name" type="text" autocomplete="given-name" maxlength="50" required aria-describedby="name-error">
+            <button class="button primary ripple" type="submit">Weiter <span aria-hidden="true">→</span></button>
+          </div>
+          <p class="form-message" id="name-error" role="alert" aria-live="polite"></p>
+        </form>
+        <p class="privacy-note">Dein Name wird nur hier auf deinem Gerät geprüft.</p>
+      </div>
+    </section>
+
+    <section class="planner page" id="planner" aria-labelledby="planner-title" hidden>
+      <header class="planner-header">
+        <a class="brand" href="#" aria-label="Date Planner Start"><span>♥</span> <span id="brand-title">Date Planner</span></a>
+        <button class="text-button" id="reset-button" type="button">Neu beginnen</button>
+      </header>
+
+      <div class="intro glass" id="intro">
+        <div class="success-heart" aria-hidden="true">♥</div>
+        <p class="eyebrow">Schön, dass du hier bist.</p>
+        <h1 id="planner-title">Lass uns etwas Schönes planen.</h1>
+        <p class="lead">Ich habe diese kleine Seite für dich gebaut. Fünf kurze Schritte – und am Ende wartet unser Date.</p>
+        <button class="button primary ripple" id="start-button" type="button">Los geht’s <span aria-hidden="true">→</span></button>
+      </div>
+
+      <div class="resume glass" id="resume-prompt" hidden role="dialog" aria-labelledby="resume-title" aria-describedby="resume-copy">
+        <span class="resume-icon" aria-hidden="true">↻</span>
+        <div><h2 id="resume-title">Da war doch noch etwas …</h2><p id="resume-copy">Möchtest du dort weitermachen, wo du aufgehört hast?</p></div>
+        <div class="resume-actions"><button class="button secondary" id="resume-new" type="button">Neu beginnen</button><button class="button primary ripple" id="resume-continue" type="button">Fortsetzen</button></div>
+      </div>
+
+      <div class="wizard" id="wizard" hidden>
+        <div class="progress-shell" aria-label="Fortschritt">
+          <div class="progress-copy"><span id="step-label">Schritt 1 von 5</span><span id="step-name">Zeitpunkt</span></div>
+          <div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-labelledby="step-label"><span id="progress-fill"></span></div>
+        </div>
+
+        <div class="steps">
+          <section class="step glass active" data-step="1" aria-labelledby="step-1-title">
+            <div class="step-heading"><span class="step-icon" aria-hidden="true">◷</span><div><p class="eyebrow">Der Anfang</p><h2 id="step-1-title">Wann passt es dir?</h2><p>Such einfach einen schönen Zeitpunkt in der Zukunft aus.</p></div></div>
+            <div class="field-grid">
+              <label>Datum<input id="date-input" type="date" required></label>
+              <label>Uhrzeit<input id="time-input" type="time" required></label>
+            </div>
+            <p class="form-message step-error" role="alert" aria-live="polite"></p>
+          </section>
+
+          <section class="step glass" data-step="2" aria-labelledby="step-2-title" hidden>
+            <div class="step-heading"><span class="step-icon" aria-hidden="true">✦</span><div><p class="eyebrow">Etwas erleben</p><h2 id="step-2-title">Worauf hast du Lust?</h2><p>Es gibt kein falsches Date – nur verschiedene gute Ideen.</p></div></div>
+            <div class="choice-grid" id="activity-choices" role="radiogroup" aria-label="Aktivität"></div>
+            <p class="form-message step-error" role="alert" aria-live="polite"></p>
+          </section>
+
+          <section class="step glass" data-step="3" aria-labelledby="step-3-title" hidden>
+            <div class="step-heading"><span class="step-icon" aria-hidden="true">♨</span><div><p class="eyebrow">Danach vielleicht</p><h2 id="step-3-title">Was darf auf den Tisch?</h2><p>Wähle eine Richtung – die Details finden wir gemeinsam.</p></div></div>
+            <div class="choice-grid restaurant-grid" id="restaurant-choices" role="radiogroup" aria-label="Restaurant"></div>
+            <label class="other-field" id="other-field" hidden>Dein Vorschlag<input id="other-input" type="text" maxlength="100" placeholder="Zum Beispiel: dein Lieblingslokal"></label>
+            <p class="form-message step-error" role="alert" aria-live="polite"></p>
+          </section>
+
+          <section class="step glass" data-step="4" aria-labelledby="step-4-title" hidden>
+            <div class="step-heading"><span class="step-icon" aria-hidden="true">✎</span><div><p class="eyebrow">Noch etwas?</p><h2 id="step-4-title">Eine Nachricht an mich</h2><p>Optional – ein Gedanke, eine Vorfreude oder eine ganz andere Idee.</p></div></div>
+            <label for="message-input" class="sr-only">Persönliche Nachricht</label>
+            <textarea id="message-input" rows="6" maxlength="500" placeholder="Ich freue mich schon …"></textarea>
+            <div class="textarea-meta"><button class="surprise-link" id="message-inspiration" type="button">Überrasch mich mit einem Satz</button><span><span id="char-count">0</span>/500</span></div>
+          </section>
+
+          <section class="step glass summary-step" data-step="5" aria-labelledby="step-5-title" hidden>
+            <div class="step-heading"><span class="step-icon" aria-hidden="true">♥</span><div><p class="eyebrow">Das klingt nach uns</p><h2 id="step-5-title">Unser Plan steht.</h2><p>Hier ist alles noch einmal auf einen Blick.</p></div></div>
+            <dl class="summary" id="summary"></dl>
+            <div class="countdown" id="countdown" aria-live="polite"></div>
+            <div class="final-actions">
+              <button class="button secondary ripple" id="calendar-button" type="button"><span aria-hidden="true">▣</span> Date in meinen Kalender übernehmen</button>
+              <button class="button primary ripple" id="email-button" type="button"><span aria-hidden="true">✉</span> Auswahl an Luca senden</button>
+            </div>
+            <p class="config-warning" id="config-warning" hidden>Hinweis: Bitte vor dem Versenden noch die E-Mail-Adresse in der Konfiguration eintragen.</p>
+          </section>
+        </div>
+
+        <nav class="wizard-nav" aria-label="Schrittnavigation">
+          <button class="button secondary" id="back-button" type="button">← Zurück</button>
+          <button class="button primary ripple" id="next-button" type="button">Weiter →</button>
+        </nav>
+      </div>
+      <footer>Mit <span aria-label="Liebe">♥</span> von <span id="footer-name">Luca</span> gemacht.</footer>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+</body>
+</html>
